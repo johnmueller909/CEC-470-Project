@@ -11,7 +11,7 @@
   unsigned char memory[65536];
   unsigned char ACC=0;
   unsigned char IR=0;
-  unsiged int MAR=0;
+  unsigned int MAR=0;
   unsigned int PC=0;
 
   int main(int argc, CHAR* argv[])
