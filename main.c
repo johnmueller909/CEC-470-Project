@@ -73,7 +73,41 @@
 					// store MAR (16-bit constant)
 					PC += 3;
 					break;
+				case 0x06: // 0000 0110
+					// store MAR [MAR] 16-bit address
+					PC++;
+					break;
 				
+				case 0x08: // 0000 1000
+					// load ACC [16-bit address]
+					PC += 3;
+					break;
+				
+				case 0x09: // 0000 1001
+					// load ACC (16-bit constant)
+					PC += 3;
+					break;
+				
+				case 0x0A: // 0000 1010
+					// load ACC [MAR] | 16-bit address
+					PC++;
+					break;
+				
+				case 0x0C: // 0000 1100
+					// load MAR [16-bit address]
+					PC += 3;
+					break;
+				
+				case 0x0D: // 0000 1101
+					// load MAR (16-bit constant)
+					PC += 3;
+					break;
+				
+				case 0x0E: // 0000 1110
+					// load MAR [MAR] | 16-bit address
+					PC++;
+					break;
+	
 			}
 			
 		} else if ((IR & 0xF8) == 0x10) { /* Branch/Jump */
@@ -99,10 +133,78 @@
 			
 			/* JOHN INSTRUCTION CODE HERE */
 			
-		} else if ((IR & 0xf0) == 0) { /* Memory operation */
+		} else if ((IR & 0xF0) == 0) { /* Memory operation */
 			// if first 4 bits are 0000, memory operation
 			
 			/* SUMMER INSTRUCTION CODE HERE */
+			
+			// executing the instruction
+			switch(IR & 0x0F)
+			{
+				
+				case 0x00: // 0000 0000
+					// store ACC [16-bit address]
+					memory[ (memory[PC-2]<<8) + memory[PC-1] ] = ACC;
+					break;
+				
+				case 0x01: // 0000 0001
+					// store ACC (8-bit constant)
+					memory[PC-1] = ACC;
+					break;
+				
+				case 0x02: // 0000 0010
+					// store ACC [MAR] 
+					memory[MAR] = ACC;
+					break;
+				
+				case 0x04: // 0000 0100
+					//store MAR [16-bit address]
+					memory[ (memory[PC-2] << 8) + memory[PC-1] ] = MAR >> 8;
+					memory[ (memory[PC-2] << 8) + memory[PC-1] + 1 ] = MAR - ( (MAR >> 8) << 8);
+					break;
+				
+				case 0x05: // 0000 0101
+					// store MAR (16-bit constant)
+					memory[ (memory[PC-2] << 8) + memory[PC-1] ] = MAR;
+					break;
+				
+				case 0x06: // 0000 0110
+					// store MAR [MAR] 16-bit address
+					memory[MAR] = MAR >> 8;
+					memory[MAR + 1] = MAR - ((MAR >> 8) <<8);
+					break;
+				
+				case 0x08: // 0000 1000
+					// load ACC [16-bit address]
+					ACC = memory[ (memory[PC+1]<<8) + memory[PC+2] ];
+					break;
+				
+				case 0x09: // 0000 1001
+					// load ACC (8-bit constant)
+					ACC = memory[PC-1];
+					break;
+				
+				case 0x0A: // 0000 1010
+					// load ACC [MAR] | 16-bit address
+					ACC = memory[MAR];
+					break;
+				
+				case 0x0C: // 0000 1100
+					// load MAR [16-bit address]
+					MAR = ((memory[memory[PC-2]]) << 8) + memory[memory[PC-1]];
+					break;
+				
+				case 0x0D: // 0000 1101
+					// load MAR (16-bit constant)
+					MAR = (memory[PC-2]<<8) + memory[PC-1];
+					break;
+				
+				case 0x0E: // 0000 1110
+					// load MAR [MAR] | 16-bit address
+					MAR = memory[(memory[PC-2]<<8) + memory[PC-1]];
+					break;
+				
+			}
 			
 		} else if ((IR & 0xF8) == 0x10) { /* Branch/Jump */
 			// if first 5 bits are 00010, branch/jump operation
