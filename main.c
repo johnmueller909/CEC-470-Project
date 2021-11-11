@@ -3,6 +3,9 @@
   Submitted by: Sarah Harrington, John-Patrick Mueller, AnnaMaria Summer
   Created: 10/29/21  Last Edited:10/29/21*/
 
+  #include <stdio.h>
+  #include <stdlib.h>
+  #include <string.h>
   #define HALT_OPCODE 0x19
 
   void fetchNextInstruction(void);
@@ -16,9 +19,16 @@
 
   int main(int argc, char* argv[])
   {
+    FILE *mem; //Creates a file pointer for mem_in.txt
+    mem = fopen("mem_in.txt","r"); //Opens mem_in.txt for reading.
+    int i;
     
-		/* READ FROM FILE AND LOAD INTO MEMORY HERE */
-		
+    for (i = 0; i < 65536; i++)
+    {
+      fscanf(mem, "%d", &memory[i]);
+    }
+    fclose(mem); //close file mem_in.txt  
+	  
 		/*execution loop. continue fetching and executing until PC points to a
     HALT instruction*/
     while(memory[PC] != HALT_OPCODE)
