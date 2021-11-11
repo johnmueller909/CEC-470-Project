@@ -50,6 +50,21 @@
 			/* if first bit is 1, mathematical operation */
 			
 			/* JOHN PC INCREMENT CODE HERE */
+	          if ((IR & 0x0c) == 0x0c) // Destination: memory
+                      PC += 2
+		      
+	            switch (IR & 0x03) { // Source
+
+                    case 3: // Constant
+                      if ((IR & 0x08) == 0x08) // 16-bit destination
+                          PC++;
+                          PC++;
+                          break;
+
+                    case 4: // Memory
+                          PC += 2;
+                          break:
+                }
 			
 		} else if ((IR & 0xf0) == 0) { /* Memory operation */
 			// if first 4 bits are 0000, memory operation
