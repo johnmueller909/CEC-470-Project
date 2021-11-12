@@ -137,7 +137,11 @@
 			// if first 5 bits are 00010, branch/jump operation
 			
 			/* SARAH PC INCREMENT CODE HERE */
+<<<<<<< Updated upstream
 			
+=======
+            PC = PC + 3;
+>>>>>>> Stashed changes
 		} else { /* Special Opcode */
 			// else its a special opcode
 			
@@ -245,10 +249,141 @@
                     MAR = D & 0xffff;
                     break;
 
+<<<<<<< Updated upstream
                case 0xc: // Memory
                     memory[((memory[PC-2] << 8) + memory[PC-1])] = (D >> 8) & 0xff;
                     memory[((memory[PC-2] << 8) + memory[PC-1]) + 1] = D & 0xff;
                     break;
+=======
+            case 0x01: // 0000 0001
+                // store ACC (8-bit constant)
+                memory[PC - 1] = ACC;
+                break;
+
+            case 0x02: // 0000 0010
+                // store ACC [MAR]
+                memory[MAR] = ACC;
+                break;
+
+            case 0x04: // 0000 0100
+                //store MAR [16-bit address]
+                memory[(memory[PC - 2] << 8) + memory[PC - 1]] = MAR >> 8;
+                memory[(memory[PC - 2] << 8) + memory[PC - 1] + 1] = MAR - ((MAR >> 8) << 8);
+                break;
+
+            case 0x05: // 0000 0101
+                // store MAR (16-bit constant)
+                memory[(memory[PC - 2] << 8) + memory[PC - 1]] = MAR;
+                break;
+
+            case 0x06: // 0000 0110
+                // store MAR [MAR] 16-bit address
+                memory[MAR] = MAR >> 8;
+                memory[MAR + 1] = MAR - ((MAR >> 8) << 8);
+                break;
+
+            case 0x08: // 0000 1000
+                // load ACC [16-bit address]
+                ACC = memory[(memory[PC + 1] << 8) + memory[PC + 2]];
+                break;
+
+            case 0x09: // 0000 1001
+                // load ACC (8-bit constant)
+                ACC = memory[PC - 1];
+                break;
+
+            case 0x0A: // 0000 1010
+                // load ACC [MAR] | 16-bit address
+                ACC = memory[MAR];
+                break;
+
+            case 0x0C: // 0000 1100
+                // load MAR [16-bit address]
+                MAR = ((memory[memory[PC - 2]]) << 8) + memory[memory[PC - 1]];
+                break;
+
+            case 0x0D: // 0000 1101
+                // load MAR (16-bit constant)
+                MAR = (memory[PC - 2] << 8) + memory[PC - 1];
+                break;
+
+            case 0x0E: // 0000 1110
+                // load MAR [MAR] | 16-bit address
+                MAR = memory[(memory[PC - 2] << 8) + memory[PC - 1]];
+                break;
+
+            }
+
+        }
+        else if ((IR & 0xF8) == 0x10) { /* Branch/Jump */
+         // if first 5 bits are 00010, branch/jump operation
+         /* SARAH INSTRUCTION CODE HERE */
+            switch (IR & 0x0F)
+            {
+            case 0x00: //000
+                PC = (memory[PC - 1] << 8) + memory[PC - 2];
+                break;
+
+            case 0x01: //001
+                if (ACC == 0)
+                {
+                    PC = (memory[PC - 1] << 8) + memory[PC - 2];
+                }
+                break;
+
+            case 0x02: //010
+                if (ACC != 0)
+                {
+                    PC = (memory[PC - 1] << 8) + memory[PC - 2];
+                }
+                break;
+
+            case 0x03: //011
+                if (ACC < 0)
+                {
+                    PC = (memory[PC - 1] << 8) + memory[PC - 2];
+                }
+                break;
+
+            case 0x04: //100
+                if (ACC <= 0)
+                {
+                    PC = (memory[PC - 1] << 8) + memory[PC - 2];
+                }
+                break;
+
+            case 0x05: //101
+                if (ACC > 0)
+                {
+                    PC = (memory[PC - 1] << 8) + memory[PC - 2];
+                }
+                break;
+
+            case 0x06: //110
+                if (ACC >= 0)
+                {
+                    PC = (memory[PC - 1] << 8) + memory[PC - 2];
+                }
+                break;
+
+            }
+        }
+        else { /* Special Opcode */
+         // else its a special opcode
+            PC++;
+            // The following is the logic code for a special opcode or an illegal opcode
+            if (IR == 0x18) // Then it's a NOP -- do nothing
+            {
+              break;
+            }
+            else if (IR == 0x19) // Then it's a HALT -- framework will halt for us
+            {
+                HALT_OPCODE;
+            }
+            else { // Otherwise it's an illegal opcode -- you can print an error message if you want to
+            }
+        }
+>>>>>>> Stashed changes
     }
   }
 			
