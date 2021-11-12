@@ -49,7 +49,7 @@
 		{
 	          /* JOHN PC INCREMENT CODE HERE */
 	          if ((IR & 0x0c) == 0x0c){ // If the destination is memory
-                      PC += 2
+				  PC += 2;
 	         } 
 	            switch (IR & 0x03) { // For the source
 
@@ -61,7 +61,7 @@
 
                     case 4: // If the source is a memory location
                           PC += 2;
-                          break:
+						  break;
                 }
 			
 		} else if ((IR & 0xf0) == 0) { /* Memory operation */
@@ -146,7 +146,7 @@
 		    // The following is the logic code for a special opcode or an illegal opcode
 		    if (IR == 0x18) // Then it's a NOP -- do nothing
 		    {
-		      break;
+		      
 		    }
 		    else if (IR == 0x19) // Then it's a HALT -- framework will halt for us
 		    {
@@ -163,153 +163,157 @@
 	{
 		
 		// checking opcode
-		if((IR & 0x80) == 0x80) /* Mathematical Operation */
+		if ((IR & 0x80) == 0x80) /* Mathematical Operation */
 		{
-		/* JOHN INSTRUCTION CODE HERE */
-		int D; //D for destination
-                int S; // S for source
+			/* JOHN INSTRUCTION CODE HERE */
+			int D; //D for destination
+			int S; // S for source
 
-               switch (IR & 0x0c) { // This is to check destination
+			switch (IR & 0x0c) { // This is to check destination
 
-               case 0: // Indirect (MAR as pointer)
-                     D = memory[MAR];
-                     break;
+			case 0: // Indirect (MAR as pointer)
+				D = memory[MAR];
+				break;
 
-               case 4: // Accumulator ACC
-                     D = ACC;
-                     break;
+			case 4: // Accumulator ACC
+				D = ACC;
+				break;
 
-               case 8: // Address register MAR
-                     D = MAR;
-                     break;
+			case 8: // Address register MAR
+				D = MAR;
+				break;
 
-               case 12: // Memory
-                 if ((IR & 0x02) == 0)
-                   D = memory[((memory[PC-2] << 8) + memory[PC-1])];
-            else
-                   D = memory[((memory[PC-4] << 8) + memory[PC-3])];
-                   break;
-            }
+			case 12: // Memory
+				if ((IR & 0x02) == 0)
+					D = memory[((memory[PC - 2] << 8) + memory[PC - 1])];
+				else
+					D = memory[((memory[PC - 4] << 8) + memory[PC - 3])];
+				break;
+			}
 
-               switch (IR & 0x03) { // This is to check the source
+			switch (IR & 0x03) { // This is to check the source
 
-               case 0: // Indirect (MAR used as a pointer)
-                    S = memory[MAR];
-                    break;
+			case 0: // Indirect (MAR used as a pointer)
+				S = memory[MAR];
+				break;
 
-               case 1: // Accumulator ACC
-                     S = ACC;
-                     break;
+			case 1: // Accumulator ACC
+				S = ACC;
+				break;
 
-               case 2: // Constant
-                     S = memory[PC-1];
-                if ((IR & 0x0c) == 0x8)
-                     S += memory[PC-2] << 8;
-                     break;
+			case 2: // Constant
+				S = memory[PC - 1];
+				if ((IR & 0x0c) == 0x8)
+					S += memory[PC - 2] << 8;
+				break;
 
-                case 3: // Memory
-                     S = memory[((memory[PC-2] << 8) + memory[PC-1])];
-                 if ((IR & 0x0c) == 0x8) {
-                     S <<= 8;
-                     S += memory[(memory[PC-2] << 8) + memory[PC-1]+1];
-             }
-                    break;
-           }
+			case 3: // Memory
+				S = memory[((memory[PC - 2] << 8) + memory[PC - 1])];
+				if ((IR & 0x0c) == 0x8) {
+					S <<= 8;
+					S += memory[(memory[PC - 2] << 8) + memory[PC - 1] + 1];
+				}
+				break;
+			}
 
-               switch (IR & 0x70){ // Checking which function
-               
-	       case 0x00: // AND operation
-                    D &= S;
-                    break;
-               case 0x10: // OR opertaion
-                    D |= S;
-                    break;
-               case 0x20: // XOR operation
-                    D ^= S;
-                    break;
-               case 0x30: // ADD operation
-                    D += S;
-                    break;
-               case 0x40: // SUB operation
-                    D -= S;
-                    break;
-               case 0x50: // INC operation
-                    D++;
-                    break;
-               case 0x60: // DEC operation
-                    D--;
-                    break;
-               case 0x70: // NOT operation
-                    D = !D;
-                    break;
-            }
+			switch (IR & 0x70) { // Checking which function
 
-               switch (IR & 0x0c) { // Checks the store destination
+			case 0x00: // AND operation
+				D &= S;
+				break;
+			case 0x10: // OR opertaion
+				D |= S;
+				break;
+			case 0x20: // XOR operation
+				D ^= S;
+				break;
+			case 0x30: // ADD operation
+				D += S;
+				break;
+			case 0x40: // SUB operation
+				D -= S;
+				break;
+			case 0x50: // INC operation
+				D++;
+				break;
+			case 0x60: // DEC operation
+				D--;
+				break;
+			case 0x70: // NOT operation
+				D = !D;
+				break;
+			}
 
-               case 0x0: // Indirect (MAR used as pointer)
-                    memory[MAR] = D & 0xff;
-                    break;
+			switch (IR & 0x0c) { // Checks the store destination
 
-               case 0x4: // Accumulator ACC
-                    ACC = D & 0xff;
-                    break;
+			case 0x0: // Indirect (MAR used as pointer)
+				memory[MAR] = D & 0xff;
+				break;
 
-               case 0x8: // Address register MAR
-                    MAR = D & 0xffff;
-                    break;
+			case 0x4: // Accumulator ACC
+				ACC = D & 0xff;
+				break;
 
-	       } else if ((IR & 0xF8) == 0x10) { /* Branch/Jump */
+			case 0x8: // Address register MAR
+				MAR = D & 0xffff;
+				break;
+
+			}
+		}
+		else if ((IR & 0xF8) == 0x10) { /* Branch/Jump */
 		 // if first 5 bits are 00010, branch/jump operation
 		 /* SARAH INSTRUCTION CODE HERE */
-		    switch (IR & 0x0F)
-		    {
-		    case 0x00: //000
-			PC = (memory[PC - 1] << 8) + memory[PC - 2];
-			break;
-
-		    case 0x01: //001
-			if (ACC == 0)
+			switch (IR & 0x0F)
 			{
-			    PC = (memory[PC - 1] << 8) + memory[PC - 2];
-			}
-			break;
+			case 0x00: //000
+				PC = (memory[PC - 1] << 8) + memory[PC - 2];
+				break;
 
-		    case 0x02: //010
-			if (ACC != 0)
-			{
-			    PC = (memory[PC - 1] << 8) + memory[PC - 2];
-			}
-			break;
+			case 0x01: //001
+				if (ACC == 0)
+				{
+					PC = (memory[PC - 1] << 8) + memory[PC - 2];
+				}
+				break;
 
-		    case 0x03: //011
-			if (ACC < 0)
-			{
-			    PC = (memory[PC - 1] << 8) + memory[PC - 2];
-			}
-			break;
+			case 0x02: //010
+				if (ACC != 0)
+				{
+					PC = (memory[PC - 1] << 8) + memory[PC - 2];
+				}
+				break;
 
-		    case 0x04: //100
-			if (ACC <= 0)
-			{
-			    PC = (memory[PC - 1] << 8) + memory[PC - 2];
-			}
-			break;
+			case 0x03: //011
+				if (ACC < 0)
+				{
+					PC = (memory[PC - 1] << 8) + memory[PC - 2];
+				}
+				break;
 
-		    case 0x05: //101
-			if (ACC > 0)
-			{
-			    PC = (memory[PC - 1] << 8) + memory[PC - 2];
-			}
-			break;
+			case 0x04: //100
+				if (ACC <= 0)
+				{
+					PC = (memory[PC - 1] << 8) + memory[PC - 2];
+				}
+				break;
 
-		    case 0x06: //110
-			if (ACC >= 0)
-			{
-			    PC = (memory[PC - 1] << 8) + memory[PC - 2];
-			}
-			break;
+			case 0x05: //101
+				if (ACC > 0)
+				{
+					PC = (memory[PC - 1] << 8) + memory[PC - 2];
+				}
+				break;
 
-            	} else if ((IR & 0xF0) == 0) { /* Memory operation */
+			case 0x06: //110
+				if (ACC >= 0)
+				{
+					PC = (memory[PC - 1] << 8) + memory[PC - 2];
+				}
+				break;
+
+			}
+		}
+		else if ((IR & 0xF0) == 0) { /* Memory operation */
 			// if first 4 bits are 0000, memory operation
 			
 			/* SUMMER INSTRUCTION CODE HERE */
