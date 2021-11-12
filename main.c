@@ -25,7 +25,7 @@
     
     for (i = 0; i < 65536; i++)
     {
-      fscanf(mem, "%d", &memory[i]); //Write from file to array
+      fscanf(mem, "%s", &memory[i]); //Write from file to array
     }
     fclose(mem); //close file mem_in.txt  
 	  
@@ -43,31 +43,38 @@
 	{
 		// IR = next opcode
 		IR = memory[PC];
-		
+		printf("fetching next instruction");
 		// checking opcode
-		if((IR & 0x80) == 0x80) /* Mathematical Operation */
-		{
+		if (IR == 0x18) {
+				// Then it's a NOP -- do nothing
+				PC++;
+		} else if (IR == 0x19) {
+				// Then it's a HALT -- framework will halt for us
+				//memory[PC] = HALT_OPCODE;
+		} else if((IR & 0x80) == 0x80) {/* Mathematical Operation */
+		
+				printf("mathematical operation");
 	          /* JOHN PC INCREMENT CODE HERE */
-	          if ((IR & 0x0c) == 0x0c){ // If the destination is memory
-                      PC += 2
+	         if ((IR & 0x0c) == 0x0c){ // If the destination is memory
+                      PC += 2;
 	         } 
-	            switch (IR & 0x03) { // For the source
+					switch (IR & 0x03) { // For the source
 
-                    case 3: // If the source is a constant 
-                      if ((IR & 0x08) == 0x08) // This is for 16-bit destination
-                          PC++;
-                          PC++;
-                          break;
+								case 3: // If the source is a constant 
+									if ((IR & 0x08) == 0x08) // This is for 16-bit destination
+											PC++;
+											PC++;
+											break;
 
-                    case 4: // If the source is a memory location
-                          PC += 2;
-                          break:
-                }
+								case 4: // If the source is a memory location
+											PC += 2;
+											break;
+					 }
 			
 		} else if ((IR & 0xf0) == 0) { /* Memory operation */
 			// if first 4 bits are 0000, memory operation
 			
-			/* SUMMER PC INCREMENT CODE HERE */
+			printf("Memory Operation");
 			
 			switch(IR & 0x0F)
 			{
@@ -138,8 +145,19 @@
 			
 			/* SARAH PC INCREMENT CODE HERE */
 			
-		} else { /* Special Opcode */
+			printf("Branch");
+			
+		} else {
 			// else its a special opcode
+			
+			printf("special opcode");
+			
+			/*
+			} else {
+				// Otherwise it's an illegal opcode -- you can print an error message if you want to
+				printf("Error: Illegal opcode");
+			}
+			*/
 			
 		}		
 		
@@ -148,6 +166,7 @@
 	
 	void executeInstruction()
 	{
+		printf("executing instruction");
 		
 		// checking opcode
 		if((IR & 0x80) == 0x80) /* Mathematical Operation */
@@ -250,7 +269,6 @@
                     memory[((memory[PC-2] << 8) + memory[PC-1]) + 1] = D & 0xff;
                     break;
     }
-  }
 			
 		} else if ((IR & 0xF0) == 0) { /* Memory operation */
 			// if first 4 bits are 0000, memory operation
